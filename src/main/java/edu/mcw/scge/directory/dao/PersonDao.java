@@ -132,32 +132,28 @@ public class PersonDao extends AbstractDAO {
 
     public void insertPersonInfo(int personId, List<Integer> roleIds,int groupId, int grantId, int institutionId ) throws Exception {
         for(int role:roleIds){
-            if(!isPersonInfoExists(personId, role, groupId, institutionId)){
-                insertPersonInfo(personId, role, groupId,grantId, institutionId);
+            if(!isPersonInfoExists(personId, groupId)){
+                insertPersonInfo(personId,role,  groupId);
             }
         }
     }
-    public boolean isPersonInfoExists(int personId, int role, int groupId, int institutionId) throws Exception {
-        List<Integer> personInfo= getPersonInfo(personId, role, groupId, institutionId);
-        if(personInfo!=null && personInfo.size()>0){
-            return true;
-        }else
-            return false;
+    public boolean isPersonInfoExists(int personId,  int groupId) throws Exception {
+        List<Integer> personInfo= getPersonId(personId,  groupId);
+        return personInfo != null && personInfo.size() > 0;
     }
 
-    public List<Integer> getPersonInfo(int personId, int role, int groupId, int institutionId) throws Exception {
-        String sql="select person_id from person_info where person_id=? and role_key=? and group_id=? and institution_id=?";
+    public List<Integer> getPersonId(int personId, int groupId) throws Exception {
+        String sql="select person_id from person_info where person_id=? and group_id=?";
         IntListQuery query=new IntListQuery(this.getDataSource(), sql);
-        return execute(query, personId, role, groupId, institutionId);
+        return execute(query, personId,  groupId);
     }
 
-    public void insertPersonInfo(int personId, int roleId,int groupId, int grantId, int institutionId ) throws Exception {
+    public void insertPersonInfo(int personId, int roleId,int groupId) throws Exception {
 
         String sql="insert into person_info(person_id, " +
                 "group_id," +
-                "role_key," +
-                "grant_id, institution_id) values(?,?,?,?,?)";
-        update(sql, personId,  groupId, roleId, grantId, institutionId);
+                "role_key) values(?,?,?)";
+        update(sql, personId,  groupId, roleId);
 
 
     }
@@ -205,6 +201,7 @@ public class PersonDao extends AbstractDAO {
                 }
             }
             if(!active) {
+                id=members.get(0).getId();
                 p.setId(members.get(0).getId());
 
             }else{

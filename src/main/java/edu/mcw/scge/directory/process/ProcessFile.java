@@ -58,33 +58,34 @@ public class ProcessFile {
                         if(!initiatives.contains(projectType.trim().toLowerCase())){
                             initiatives.add(projectType.trim().toLowerCase());
                         }
-                        groupId = dao.getGroupId(projectType, "group");
+                        groupId = dao.getGroupId(projectType.trim(), "group");
                     }
                     if (colIndex == 1) {
-                        grantTitle = cell.getStringCellValue();
-                        grant.setGrantInitiative(projectType);
-                        grant.setGrantTitle(grantTitle);
-                        grant.setGrantTitleLc(grantTitle.toLowerCase());
-                        if(!projectType.equalsIgnoreCase("NIH"))
-                            if(!grants.contains(grantTitle.trim().toLowerCase())){
+                        grantTitle = cell.getStringCellValue().trim();
+                        grant.setGrantInitiative(projectType.trim());
+                        grant.setGrantTitle(grantTitle.trim());
+                        grant.setGrantTitleLc(grantTitle.trim().toLowerCase());
+                        if(!projectType.equalsIgnoreCase("NIH")) {
+                            if (!grants.contains(grantTitle.trim().toLowerCase())) {
                                 grants.add(grantTitle.trim().toLowerCase());
                             }
-                        grantId = grantDao.insertOrUpdate(grant);
+                            grantId = grantDao.insertOrUpdate(grant);
+                        }
                         subgroupId = dao.getGroupId(grantTitle, "subgroup");
                     }
 
                     if (colIndex == 2) {
-                        name = cell.getStringCellValue();
+                        name = cell.getStringCellValue().trim();
                         p.setName(name);
                         p.setName_lc(name.toLowerCase());
 
-                        if (!names.contains(name.toLowerCase().trim())) {
-                            names.add(name.toLowerCase().trim());
+                        if (!names.contains(name.toLowerCase())) {
+                            names.add(name.toLowerCase());
                         }
                     }
                     if (colIndex == 3) {
 
-                        if (cell.getStringCellValue().equalsIgnoreCase("x")) {
+                        if (cell.getStringCellValue().trim().equalsIgnoreCase("x")) {
                             int roleId = dao.getRoleId("POC");
                             roleIds.add(roleId);
                         }
@@ -93,7 +94,7 @@ public class ProcessFile {
                     p.setStatus("ACTIVE");
                     //    if (colIndex == 4) {
                     if (colIndex == 4) {
-                        String role1 = cell.getStringCellValue().toLowerCase();
+                        String role1 = cell.getStringCellValue().trim().toLowerCase();
                         if (role1.contains("administrative")) {
                             role1 = "administrative contact";
                         }
@@ -101,16 +102,16 @@ public class ProcessFile {
                         roleIds.add(roleId);
                     }
                     if (colIndex == 5) {
-                        p.setEmail(cell.getStringCellValue());
-                        p.setEmail_lc(cell.getStringCellValue().toLowerCase());
+                        p.setEmail(cell.getStringCellValue().trim());
+                        p.setEmail_lc(cell.getStringCellValue().trim().toLowerCase());
                     }
                     if (colIndex == 6) {
-                        institution = cell.getStringCellValue();
+                        institution = cell.getStringCellValue().trim();
                         institutionId = dao.insertOrUpdateInstitution(institution);
-                        if(!institutions.contains(institution.trim().toLowerCase()))
-                            institutions.add(institution.trim().toLowerCase());
-                       /* p.setInstitution(institutionId);
-                        p.setInstitutionName(institution);*/
+                        if(!institutions.contains(institution.toLowerCase()))
+                            institutions.add(institution.toLowerCase());
+                        p.setInstitution(institutionId);
+                        p.setInstitutionName(institution);
                     }
                     if (colIndex == 7) {
                         switch (cell.getCellType()) {
@@ -118,7 +119,7 @@ public class ProcessFile {
                                 p.setPhone(String.valueOf(cell.getNumericCellValue()));
                                 break;
                             case Cell.CELL_TYPE_STRING:
-                                p.setPhone(cell.getStringCellValue());
+                                p.setPhone(cell.getStringCellValue().trim());
                         }
                     }
                 }
@@ -134,18 +135,12 @@ public class ProcessFile {
                         dao.insertPersonInfo(personId, roleIds, subgroupId, grantId, institutionId);
                     gdao.makeAssociations(groupId, subgroupId);
 
-                    //   insertPersonAuthority(personId);
                 }
             }
 
-            // }
+
         }
         fs.close();
-        System.out.println("INITIATIVES:"+ initiatives.size());
-        System.out.println("Grants:"+grants.size());
-        System.out.println("People Inserted:"+ persons.size());
-        System.out.println("PERSON NAMES:" +names.size());
-        System.out.println("Intitutions: "+ institutions.size());
 
     }
 }
