@@ -37,7 +37,8 @@ dependencies {
     compile group: 'commons-net', name: 'commons-net', version: '3.6'
 }
 task update_scgecore(type:Copy){
-    from file("../../scge-core/build/libs/scge-core-1.0.jar")
+ //   from file("../../scge-core/build/libs/scge-core-1.0.jar")
+    from file( "C:\\Users\\jthota\\Documents\\git\\scge-core\\build\\libs//scge-core-1.0.jar")
     into file("lib/")
 
 }
